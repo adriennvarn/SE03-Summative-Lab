@@ -1,16 +1,16 @@
 // ********* CONSTANTS ********** //
 const API_URL = "https://freedictionaryapi.com/api/v1/entries/en/"
 
-// Dictionary results + error message
+// ELEMENT REFERENCES
+// Dictionary results
 const wordElement = document.getElementById("word")
 const phoneticElement = document.getElementById("phonetic")
 const audioContainer = document.querySelector("audio")
 const meaningsContainer = document.getElementById("meanings")
+// Error message
 const errorMessageElement = document.getElementById("error-message")
-
 // Form elements
 const searchInput = document.getElementById("search")
-const submitButton = document.getElementById("submit")
 
 
 // ********** DATA PROCESSING FUNCTIONS ********** //
