@@ -17,8 +17,6 @@ const submitButton = document.getElementById("submit")
 
 // ***** Fetch function ***** //
 async function fetchDefinition(word) {
-    // Reset all fields to default state
-    resetData()
     // Fetch and parse data
     try {
         const result = await fetch(API_URL + word)
@@ -67,8 +65,10 @@ function addData(data) {
     // Fill in word
     wordElement.textContent = data.word
 
-    // Fill in phonetics and audio
-    phoneticElement.textContent = data.entries[0].pronunciations[0].text
+    // Verify pronunciation is available and fill in phonetics
+    if (data.entries[0].pronunciations.length > 0) {
+        phoneticElement.textContent = data.entries[0].pronunciations[0].text
+    }
 
 
     // ***** AUDIO is not available in the API I'm using. Will update if audio API is found.
@@ -83,7 +83,7 @@ function addData(data) {
     // For each part of speech...
     for (const entry of data.entries) {
         // Set part of speech text
-        const pos = document.createElement("h5")
+        const pos = document.createElement("h3")
         let posText = entry.partOfSpeech
         posText = posText[0].toUpperCase() + posText.slice(1)
         pos.textContent = posText
@@ -101,6 +101,7 @@ function addData(data) {
             if (definition.examples[0]) {
                 const example = document.createElement("li")
                 example.textContent = definition.examples[0]
+                example.classList.add("example")
                 definitionList.appendChild(example)
             }
 
@@ -118,7 +119,18 @@ function addData(data) {
 // process submission event
 function handleSubmit(event) {
     event.preventDefault()
+    // Reset all fields to default state
+    resetData()
+
+    // grab and verify input
     const word = searchInput.value
+    // if input empty, show error and return
+    if (word === "") {
+        errorMessageElement.textContent = "Input must not be empty."
+        errorMessageElement.classList.remove("hidden")
+        return
+    }
+
     fetchDefinition(word)
     // clear search bar
     searchInput.value = ""
