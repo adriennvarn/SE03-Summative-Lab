@@ -1,2 +1,5 @@
-# SE03-Summative-Lab
-Flatiron School SE03 Module 8: Summative Lab
+# API Dictionary Website
+Basic website featuring access to a free API-based dictionary service. 
+
+In the works:
+- Audio (will have to be sourced from a different API; may or may not be possible)
