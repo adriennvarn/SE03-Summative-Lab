@@ -23,7 +23,7 @@ async function fetchDefinition(word) {
     try {
         const result = await fetch(API_URL + word)
         const data = await result.json()
-        
+
         // Make sure there's actually data for the entered word
         if (data.entries.length === 0) {
             throw new Error(`No dictionary entry exists for "${word}"`)
@@ -31,7 +31,7 @@ async function fetchDefinition(word) {
 
         // If no errors, add data to page
         addData(data)
-    } 
+    }
     catch (err) {
         // Log full error
         console.error("Fetch error:", err)
@@ -73,7 +73,7 @@ function addData(data) {
 
     // ***** AUDIO is not available in the API I'm using. Will update if audio API is found.
     // ***** In the meantime, code below demonstrates understanding.
-    
+
     // const audioSource = document.createElement("source")
     // audioSource.setAttribute("src", data.phonetics[0].sourceUrl)
     // audioSource.setAttribute("type", "audio/ogg")
@@ -115,10 +115,16 @@ function addData(data) {
 
 // *********** LISTENER *********** //
 
-submitButton.addEventListener("click", (event) => {
+// process submission event
+function handleSubmit(event) {
     event.preventDefault()
     const word = searchInput.value
     fetchDefinition(word)
     // clear search bar
     searchInput.value = ""
+}
+
+// attach "submit" listener to entire form
+document.querySelector("form").addEventListener("submit", (event) => {
+    handleSubmit(event)
 })
