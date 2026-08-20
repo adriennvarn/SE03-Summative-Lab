@@ -131,7 +131,7 @@ function handleSubmit(event) {
         return
     }
 
-    fetchDefinition(word)
+    fetchDefinition(word.toLowerCase())
     // clear search bar
     searchInput.value = ""
 }
