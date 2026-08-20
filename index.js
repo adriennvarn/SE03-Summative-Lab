@@ -2,9 +2,31 @@ const dummyData = [{"word":"hello","phonetics":[{"audio":"https://api.dictionary
 
 function addData(data) {
     document.getElementById("word").textContent = data.word
-    document.getElementById("phonetic").textContent = data.phonetics[1].text
-    document.querySelector("audio source").setAttribute("src", data.phonetcs[0].audio)
+    document.getElementById("phonetic").textContent = data.phonetics[0].text
+    // TODO: support other formats with audio source tags, since source audio is unknown
+    document.querySelector("audio source").setAttribute("src", data.phonetics[0].sourceUrl)
 
+    const meaningsDiv = document.getElementById("meanings")
+
+    for(const entry of data.meanings) {
+        const pos = document.createElement("h6")
+        pos.textContent = entry.partOfSpeech
+
+        const definitionList = document.createElement("ul")
+        for(const definition of entry.definitions) {
+            const def = document.createElement("li")
+            const example = document.createElement("li")
+
+            def.textContent = definition.definition
+            example.textContent = definition.example 
+
+            definitionList.appendChild(def)
+            definitionList.appendChild(example)
+            definitionList.append(document.createElement("br"))
+        }
+        
+        meaningsDiv.append(definitionList, document.createElement("hr"))
+    }
 }
 
 addData(dummyData[0])
