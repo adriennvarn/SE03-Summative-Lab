@@ -23,8 +23,16 @@ async function fetchDefinition(word) {
     try {
         const result = await fetch(API_URL + word)
         const data = await result.json()
+        
+        // Make sure there's actually data for the entered word
+        if (data.entries.length === 0) {
+            throw new Error(`No dictionary entry exists for "${word}"`)
+        }
+
+        // If no errors, add data to page
         addData(data)
-    } catch (err) {
+    } 
+    catch (err) {
         // Log full error
         console.error("Fetch error:", err)
 
@@ -104,4 +112,13 @@ function addData(data) {
     }
 }
 
-fetchDefinition("goodbye")
+
+// *********** LISTENER *********** //
+
+submitButton.addEventListener("click", (event) => {
+    event.preventDefault()
+    const word = searchInput.value
+    fetchDefinition(word)
+    // clear search bar
+    searchInput.value = ""
+})
