@@ -71,7 +71,7 @@ function addData(data) {
     }
 
 
-    // ***** AUDIO is not available in the API I'm using. Will update if audio API is found.
+    // ***** Audio is not available in the API I'm using. Will update if audio API is found.
     // ***** In the meantime, code below demonstrates understanding.
 
     // const audioSource = document.createElement("source")
