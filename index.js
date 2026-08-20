@@ -1,26 +1,43 @@
+// ********* CONSTANTS ********** //
 const API_URL = "https://freedictionaryapi.com/api/v1/entries/en/"
 
-
-// Element references that aren't changed
-
+// Dictionary results + error message
 const wordElement = document.getElementById("word")
 const phoneticElement = document.getElementById("phonetic")
 const audioContainer = document.querySelector("audio")
 const meaningsContainer = document.getElementById("meanings")
+const errorMessageElement = document.getElementById("error-message")
 
+// Form elements
+const searchInput = document.getElementById("search")
+const submitButton = document.getElementById("submit")
+
+
+// ********** DATA PROCESSING FUNCTIONS ********** //
+
+// ***** Fetch function ***** //
 async function fetchDefinition(word) {
+    // Reset all fields to default state
+    resetData()
     // Fetch and parse data
     try {
-        resetData()
         const result = await fetch(API_URL + word)
-        // const result = await fetch(API_URL + word)
         const data = await result.json()
         addData(data)
     } catch (err) {
+        // Log full error
         console.error("Fetch error:", err)
+
+        // Error on page for user
+        errorMessageElement.textContent = err.message
+        errorMessageElement.classList.remove("hidden")
     }
 }
 
+
+// ********** DISPLAY FUNCTIONS ********* //
+
+// Reset all fields to default condition
 function resetData() {
     // Clear word, phonetic
     wordElement.textContent = ""
@@ -32,8 +49,12 @@ function resetData() {
 
     // Just kill the whole meanings div
     meaningsContainer.innerHTML = ""
+
+    // Hide error message
+    errorMessageElement.classList.add("hidden")
 }
 
+// Process dictionary data and display on screen
 function addData(data) {
     // Fill in word
     wordElement.textContent = data.word
@@ -84,7 +105,3 @@ function addData(data) {
 }
 
 fetchDefinition("goodbye")
-
-module.exports = {
-
-}

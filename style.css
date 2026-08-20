@@ -42,6 +42,13 @@ form #submit {
     margin: 2em;
 }
 
+/* Error Message */
+
+#error-message {
+    color: rgb(226, 0, 0);
+    padding: 2em;
+}
+
 /* Footer */
 
 footer {
