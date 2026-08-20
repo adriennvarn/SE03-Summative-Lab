@@ -1,36 +1,90 @@
-const dummyData = [{"word":"hello","phonetics":[{"audio":"https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3","sourceUrl":"https://commons.wikimedia.org/w/index.php?curid=75797336","license":{"name":"BY-SA 4.0","url":"https://creativecommons.org/licenses/by-sa/4.0"}},{"text":"/həˈləʊ/","audio":"https://api.dictionaryapi.dev/media/pronunciations/en/hello-uk.mp3","sourceUrl":"https://commons.wikimedia.org/w/index.php?curid=9021983","license":{"name":"BY 3.0 US","url":"https://creativecommons.org/licenses/by/3.0/us"}},{"text":"/həˈloʊ/","audio":""}],"meanings":[{"partOfSpeech":"noun","definitions":[{"definition":"\"Hello!\" or an equivalent greeting.","synonyms":[],"antonyms":[]}],"synonyms":["greeting"],"antonyms":[]},{"partOfSpeech":"verb","definitions":[{"definition":"To greet with \"hello\".","synonyms":[],"antonyms":[]}],"synonyms":[],"antonyms":[]},{"partOfSpeech":"interjection","definitions":[{"definition":"A greeting (salutation) said when meeting someone or acknowledging someone’s arrival or presence.","synonyms":[],"antonyms":[],"example":"Hello, everyone."},{"definition":"A greeting used when answering the telephone.","synonyms":[],"antonyms":[],"example":"Hello? How may I help you?"},{"definition":"A call for response if it is not clear if anyone is present or listening, or if a telephone conversation may have been disconnected.","synonyms":[],"antonyms":[],"example":"Hello? Is anyone there?"},{"definition":"Used sarcastically to imply that the person addressed or referred to has done something the speaker or writer considers to be foolish.","synonyms":[],"antonyms":[],"example":"You just tried to start your car with your cell phone. Hello?"},{"definition":"An expression of puzzlement or discovery.","synonyms":[],"antonyms":[],"example":"Hello! What’s going on here?"}],"synonyms":[],"antonyms":["bye","goodbye"]}],"license":{"name":"CC BY-SA 3.0","url":"https://creativecommons.org/licenses/by-sa/3.0"},"sourceUrls":["https://en.wiktionary.org/wiki/hello"]}]
+const API_URL = "https://freedictionaryapi.com/api/v1/entries/en/"
 
-function addData(data) {
-    document.getElementById("word").textContent = data.word
-    document.getElementById("phonetic").textContent = data.phonetics[0].text
-    // TODO: support other formats with audio source tags, since source audio is unknown
-    document.querySelector("audio source").setAttribute("src", data.phonetics[0].sourceUrl)
 
-    const meaningsDiv = document.getElementById("meanings")
+// Element references that aren't changed
 
-    for(const entry of data.meanings) {
-        const pos = document.createElement("h6")
-        pos.textContent = entry.partOfSpeech
+const wordElement = document.getElementById("word")
+const phoneticElement = document.getElementById("phonetic")
+const audioContainer = document.querySelector("audio")
+const meaningsContainer = document.getElementById("meanings")
 
-        const definitionList = document.createElement("ul")
-        for(const definition of entry.definitions) {
-            const def = document.createElement("li")
-            const example = document.createElement("li")
-
-            def.textContent = definition.definition
-            example.textContent = definition.example 
-
-            definitionList.appendChild(def)
-            definitionList.appendChild(example)
-            definitionList.append(document.createElement("br"))
-        }
-        
-        meaningsDiv.append(definitionList, document.createElement("hr"))
+async function fetchDefinition(word) {
+    // Fetch and parse data
+    try {
+        resetData()
+        const result = await fetch(API_URL + word)
+        // const result = await fetch(API_URL + word)
+        const data = await result.json()
+        addData(data)
+    } catch (err) {
+        console.error("Fetch error:", err)
     }
 }
 
-addData(dummyData[0])
+function resetData() {
+    // Clear word, phonetic
+    wordElement.textContent = ""
+    phoneticElement.textContent = ""
+
+    // Clear sources and hide player
+    audioContainer.innerHTML = ""
+    audioContainer.classList.add("hidden")
+
+    // Just kill the whole meanings div
+    meaningsContainer.innerHTML = ""
+}
+
+function addData(data) {
+    // Fill in word
+    wordElement.textContent = data.word
+
+    // Fill in phonetics and audio
+    phoneticElement.textContent = data.entries[0].pronunciations[0].text
+
+
+    // ***** AUDIO is not available in the API I'm using. Will update if audio API is found.
+    // ***** In the meantime, code below demonstrates understanding.
+    
+    // const audioSource = document.createElement("source")
+    // audioSource.setAttribute("src", data.phonetics[0].sourceUrl)
+    // audioSource.setAttribute("type", "audio/ogg")
+    // audioContainer.append(audioSource)
+    // audioContainer.classList.remove("hidden")
+
+    // For each part of speech...
+    for (const entry of data.entries) {
+        // Set part of speech text
+        const pos = document.createElement("h5")
+        let posText = entry.partOfSpeech
+        posText = posText[0].toUpperCase() + posText.slice(1)
+        pos.textContent = posText
+        meaningsContainer.append(pos)
+
+        // ... and make list of definitions
+        const definitionList = document.createElement("ul")
+
+        for (const definition of entry.senses) {
+            const def = document.createElement("li")
+            def.textContent = definition.definition
+            definitionList.appendChild(def)
+
+            // Check that example is provided at all
+            if (definition.examples[0]) {
+                const example = document.createElement("li")
+                example.textContent = definition.examples[0]
+                definitionList.appendChild(example)
+            }
+
+            definitionList.append(document.createElement("br"))
+        }
+
+        // Append full definition list to meanings section
+        meaningsContainer.append(definitionList, document.createElement("hr"))
+    }
+}
+
+fetchDefinition("goodbye")
 
 module.exports = {
-    
+
 }
